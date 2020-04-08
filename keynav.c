@@ -149,6 +149,7 @@ void cmd_toggle_start(char *args);
 void cmd_grid(char *args);
 void cmd_grid_nav(char *args);
 void cmd_history_back(char *args);
+void cmd_history_last(char *args);
 void cmd_loadconfig(char *args);
 void cmd_move_down(char *args);
 void cmd_move_left(char *args);
@@ -230,6 +231,7 @@ dispatch_t dispatch[] = {
   "end", cmd_end,
   "toggle-start", cmd_toggle_start,
   "history-back", cmd_history_back,
+  "history-last", cmd_history_last,
   "quit", cmd_quit,
   "restart", cmd_restart,
   "record", cmd_record,
@@ -1032,6 +1034,19 @@ void cmd_history_back(char *args) {
     return;
 
   restore_history_point(1);
+}
+
+void cmd_history_last(char *args) {
+  if (!ISACTIVE)
+    return;
+
+  if (wininfo_history_cursor <= 1)
+    return;
+
+  wininfo_t *previous = &(wininfo_history[wininfo_history_cursor - 2]);
+  memcpy(&wininfo, previous, sizeof(wininfo));
+  appstate.need_draw = 1;
+  appstate.need_moveresize = 1;
 }
 
 void cmd_loadconfig(char *args) {
